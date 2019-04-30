@@ -613,8 +613,9 @@ static CURLUcode hostname_check(struct Curl_URL *u,
         int i = 0;
         char *h = &hostname[len + 1];
         /* pass '25' if present */
-        h += strncasecompare(h, "25", 2) * 2;
-        while(h && (*h != ']') && (i < 15))
+        if(!strncmp(h, "25", 2))
+          h += 2;
+        while(*h && (*h != ']') && (i < 15))
           scopeid[i++] = *h++;
         if(']' != *h)
           return CURLUE_MALFORMED_INPUT;
