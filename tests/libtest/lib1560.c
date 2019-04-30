@@ -153,7 +153,13 @@ static struct testcase get_parts_list[] ={
    "http | [11] | [12] | [13] | [fd00:a41::50] | [15] | / | [16] | [17]",
    CURLU_DEFAULT_SCHEME, 0, CURLUE_OK},
   {"https://[::1%252]:1234",
-   "https | [11] | [12] | [13] | [::1%252] | 1234 | / | [16] | [17]",
+   "https | [11] | [12] | [13] | [::1] | 1234 | / | [16] | [17]",
+   CURLU_DEFAULT_SCHEME, 0, CURLUE_OK},
+
+  /* here's "bad" zone id */
+  {"https://[fe80::20c:29ff:fe9c:409b%eth0]:1234",
+   "https | [11] | [12] | [13] | [fe80::20c:29ff:fe9c:409b] | 1234 "
+   "| / | [16] | [17]",
    CURLU_DEFAULT_SCHEME, 0, CURLUE_OK},
   {"https://127.0.0.1:443",
    "https | [11] | [12] | [13] | 127.0.0.1 | [15] | / | [16] | [17]",
@@ -273,6 +279,12 @@ static struct testcase get_parts_list[] ={
 };
 
 static struct urltestcase get_url_list[] = {
+  {"https://[fe80::20c:29ff:fe9c:409b%eth0]:1234",
+   "https://[fe80::20c:29ff:fe9c:409b%25eth0]:1234/",
+   0, 0, CURLUE_OK},
+  {"https://[::%25fakeit]/moo",
+   "https://[::%25fakeit]/moo",
+   0, 0, CURLUE_OK},
   {"smtp.example.com/path/html",
    "smtp://smtp.example.com/path/html",
    CURLU_GUESS_SCHEME, 0, CURLUE_OK},
